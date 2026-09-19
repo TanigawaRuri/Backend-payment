@@ -4,6 +4,7 @@ import com.tanigawa.rewardplatform.reward.dto.request.RewardHistoryRequest;
 import com.tanigawa.rewardplatform.reward.dto.response.RewardHistoryResponse;
 import com.tanigawa.rewardplatform.reward.entity.RewardEvent;
 import com.tanigawa.rewardplatform.reward.entity.RewardHistory;
+import com.tanigawa.rewardplatform.reward.entity.RewardQuantityType;
 import com.tanigawa.rewardplatform.reward.repository.RewardEventRepository;
 import com.tanigawa.rewardplatform.reward.repository.RewardHistoryRepository;
 
@@ -24,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
@@ -62,13 +64,16 @@ class RewardEventServiceTest {
                     "tester"
                 );
 
-            RewardEvent event = new RewardEvent(
-                        "name1",
-                        "description1",
-                        500L,
-                        true
-                    );
+        RewardEvent event = RewardEvent.builder()
+                .name("name1")
+                .description("description1")
+                .rewardAmount(500L)
+                .enabled(true)
+                .quantityType(RewardQuantityType.UNLIMITED)
+                .remainingCount(null)
+                .build();
 
+                
         Wallet wallet = new Wallet(user);
         wallet.increaseBalance(1000L);
 

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tanigawa.rewardplatform.exception.WrongEmailOrPasswordException;
 import com.tanigawa.rewardplatform.reward.dto.request.RewardEventRequest;
 import com.tanigawa.rewardplatform.reward.dto.request.RewardHistoryRequest;
 import com.tanigawa.rewardplatform.reward.dto.response.RewardEventResponse;

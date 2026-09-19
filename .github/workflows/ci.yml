@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -44,23 +44,56 @@ jobs:
         run: |
           pg_isready -h localhost -p 5432 -U postgres -d payment
 
-      - name: Show datasource environment
-        run: |
-          echo "SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL"
-          echo "SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME"
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/payment
-          SPRING_DATASOURCE_USERNAME: postgres
-
       - name: Make Maven wrapper executable
         run: chmod +x mvnw
 
       - name: Run tests
         run: ./mvnw test
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/payment
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/payment
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: postgres
 
       - name: Build application
         run: ./mvnw package -DskipTests
+
+      - name: Upload application artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application
+          path: target/*.jar 
+    
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Download application artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: application
+          path: target
+      
+      - name: Log in to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Builder Docker image
+        run: |
+          docker build\
+           -t ghcr.io/${{github.repository}}:${{github.sha}} \
+           -t ghcr.io/${{github.repository}}:latest .
+      
+      - name: Push Docker image
+        run: |
+          docker push ghcr.io/${{github.repository}}:${{github.sha}}
+          docker push ghcr.io/${{github.repository}}:latest

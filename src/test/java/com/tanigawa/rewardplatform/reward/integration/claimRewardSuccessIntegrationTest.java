@@ -2,9 +2,8 @@ package com.tanigawa.rewardplatform.reward.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.UUID;
 
@@ -22,6 +21,7 @@ import com.tanigawa.rewardplatform.auth.jwt.TokenProvider;
 import com.tanigawa.rewardplatform.reward.dto.request.RewardHistoryRequest;
 import com.tanigawa.rewardplatform.reward.entity.RewardEvent;
 import com.tanigawa.rewardplatform.reward.entity.RewardHistory;
+import com.tanigawa.rewardplatform.reward.entity.RewardQuantityType;
 import com.tanigawa.rewardplatform.reward.entity.RewardStatus;
 import com.tanigawa.rewardplatform.reward.repository.RewardEventRepository;
 import com.tanigawa.rewardplatform.reward.repository.RewardHistoryRepository;
@@ -81,6 +81,8 @@ class ClaimRewardIntegrationTest {
                         .description("integration test event")
                         .rewardAmount(500L)
                         .enabled(true)
+                        .quantityType(RewardQuantityType.UNLIMITED) // 기존 테스트는 대부분 무제한으로 가정해도 무방
+                        .remainingCount(null)
                         .build()
         );
 
@@ -90,6 +92,8 @@ class ClaimRewardIntegrationTest {
                         .description("integration test event")
                         .rewardAmount(300L)
                         .enabled(true)
+                        .quantityType(RewardQuantityType.UNLIMITED) // 기존 테스트는 대부분 무제한으로 가정해도 무방
+                        .remainingCount(null)
                         .build()
         );
 

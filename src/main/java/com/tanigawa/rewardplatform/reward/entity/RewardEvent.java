@@ -1,12 +1,24 @@
 package com.tanigawa.rewardplatform.reward.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import com.tanigawa.rewardplatform.exception.RewardEventExhaustedException;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Builder;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +41,16 @@ public class RewardEvent {
     @Column(nullable = false)
     private Boolean enabled;
 
+    @Version
+    private Long version;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private RewardQuantityType quantityType;
+
+    @Column
+    private Integer remainingCount;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -36,11 +58,13 @@ public class RewardEvent {
     private LocalDateTime updatedAt;
 
     @Builder
-    public RewardEvent(String name, String description, Long rewardAmount, Boolean enabled) {
+    public RewardEvent(String name, String description, Long rewardAmount, Boolean enabled, RewardQuantityType quantityType, Integer remainingCount) {
         this.name = name;
         this.description = description;
         this.rewardAmount = rewardAmount;
         this.enabled = enabled;
+        this.quantityType = quantityType;
+        this.remainingCount = remainingCount;
     }
 
     @PrePersist
@@ -56,4 +80,13 @@ public class RewardEvent {
 
     public void enable() {this.enabled = true;}
     public void disable() {this.enabled = false;}
+    public void claim() {
+        if (quantityType == RewardQuantityType.LIMITED) {
+            if (remainingCount == null || remainingCount <= 0) {
+                throw new RewardEventExhaustedException(
+                        "No remaining count for reward event id=" + this.id);
+            }
+            this.remainingCount--;
+        }
+    }
 }

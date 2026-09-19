@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.tanigawa.rewardplatform.reward.dto.request.RewardHistoryRequest;
 import com.tanigawa.rewardplatform.reward.entity.RewardEvent;
+import com.tanigawa.rewardplatform.reward.entity.RewardQuantityType;
 import com.tanigawa.rewardplatform.reward.repository.RewardEventRepository;
 import com.tanigawa.rewardplatform.reward.repository.RewardHistoryRepository;
 import com.tanigawa.rewardplatform.user.entity.User;
@@ -56,12 +57,14 @@ class RewardDisabledEventTest {
                     .nickname("tester")
                     .build();
 
-        RewardEvent event = new RewardEvent(
-                    "ChristmasEvent",
-                    "Christmas",
-                    1000L,
-                    false
-            );
+        RewardEvent event = RewardEvent.builder()
+            .name("ChristmasEvent")
+            .description("Christmas")
+            .rewardAmount(1000L)
+            .enabled(false)
+            .quantityType(RewardQuantityType.UNLIMITED)
+            .remainingCount(null)
+            .build();
         
         when(rewardHistoryRepository.findByIdempotencyKey(idempotencyKey))
             .thenReturn(Optional.empty());

@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -65,11 +67,12 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-
+    
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(
             Exception e
     ) {
+        log.error("Unexpected error occurred", e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(
@@ -106,14 +109,27 @@ public class GlobalExceptionHandler {
                 }
 
         @ExceptionHandler(WalletConflictException.class)
-        public ResponseEntity<ErrorResponse> handleWWalletConflict(
+        public ResponseEntity<ErrorResponse> handleWalletConflict(
                         WalletConflictException e
                 ) {
                         return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
+                        .status(HttpStatus.CONFLICT)
                         .body(new ErrorResponse(
                                 "CONCURRENT_WORK",
                                 "transaction is asked concurrently.",
+                                LocalDateTime.now()
+                        ));
+                }
+
+        @ExceptionHandler(RewardEventExhaustedException.class)
+        public ResponseEntity<ErrorResponse> handleRewardExhaustedConflict(
+                        RewardEventExhaustedException e
+                ) {
+                        return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(new ErrorResponse(
+                                "REWARD EXHAUSTED",
+                                "리워드 수량이 모두 소진되었습니다.",
                                 LocalDateTime.now()
                         ));
                 }

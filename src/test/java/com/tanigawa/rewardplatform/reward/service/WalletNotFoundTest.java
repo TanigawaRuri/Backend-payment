@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.tanigawa.rewardplatform.reward.dto.request.RewardHistoryRequest;
 import com.tanigawa.rewardplatform.reward.entity.RewardEvent;
 import com.tanigawa.rewardplatform.reward.entity.RewardHistory;
+import com.tanigawa.rewardplatform.reward.entity.RewardQuantityType;
 import com.tanigawa.rewardplatform.reward.repository.RewardEventRepository;
 import com.tanigawa.rewardplatform.reward.repository.RewardHistoryRepository;
 import com.tanigawa.rewardplatform.user.entity.User;
@@ -59,12 +60,14 @@ class WalletNotFoundTest {
                     .nickname("tester")
                     .build();
 
-            RewardEvent event = new RewardEvent(
-                    "Welcome",
-                    "First login reward",
-                    500L,
-                    true
-            );
+            RewardEvent event = RewardEvent.builder()
+                .name("Welcome")
+                .description("First login reward")
+                .rewardAmount(500L)
+                .enabled(true)
+                .quantityType(RewardQuantityType.UNLIMITED) // 기존 테스트는 대부분 무제한으로 가정해도 무방
+                .remainingCount(null)
+                .build();
 
             when(rewardHistoryRepository.findByIdempotencyKey(idempotencyKey))
                     .thenReturn(Optional.empty());
