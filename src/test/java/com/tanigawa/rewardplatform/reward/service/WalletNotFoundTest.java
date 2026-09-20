@@ -38,12 +38,11 @@ class WalletNotFoundTest {
     @Mock
     private RewardEventRepository rewardEventRepository;
 
-    @InjectMocks
-    private RewardEventService rewardEventService;
-
     @Mock
     private WalletRepository walletRepository;
 
+    @InjectMocks
+    private RewardEventService rewardEventService;
 
     @Test
         void claimReward_walletNotFound() {

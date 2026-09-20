@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.tanigawa.rewardplatform.exception.WalletConflictException;
 import com.tanigawa.rewardplatform.reward.dto.request.RewardHistoryRequest;
 import com.tanigawa.rewardplatform.reward.entity.RewardEvent;
+import com.tanigawa.rewardplatform.reward.entity.RewardQuantityType;
 import com.tanigawa.rewardplatform.reward.repository.RewardEventRepository;
 import com.tanigawa.rewardplatform.user.entity.User;
 import com.tanigawa.rewardplatform.user.repository.UserRepository;
@@ -60,6 +61,7 @@ class IncreaseBalanceTwiceTest {
                 .description("Concurrency test event A")
                 .rewardAmount(100L)
                 .enabled(true)
+                .quantityType(RewardQuantityType.UNLIMITED)
                 .build()
         );
 
@@ -69,6 +71,7 @@ class IncreaseBalanceTwiceTest {
                 .description("Concurrency test event B")
                 .rewardAmount(200L)
                 .enabled(true)
+                .quantityType(RewardQuantityType.UNLIMITED)
                 .build()
         );
     }

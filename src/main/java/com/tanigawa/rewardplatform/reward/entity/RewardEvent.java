@@ -80,6 +80,8 @@ public class RewardEvent {
 
     public void enable() {this.enabled = true;}
     public void disable() {this.enabled = false;}
+    public Boolean isLimited() {return quantityType == RewardQuantityType.LIMITED;}
+
     public void claim() {
         if (quantityType == RewardQuantityType.LIMITED) {
             if (remainingCount == null || remainingCount <= 0) {

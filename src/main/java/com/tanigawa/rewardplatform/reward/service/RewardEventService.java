@@ -87,10 +87,10 @@ public class RewardEventService {
 
         //Pessimistic
         //event.claim();
-        
+
         //Atomic Update
         int updated = rewardEventRepository.claimOneAtomically(event.getId());
-        if (updated == 0) throw new RewardEventExhaustedException("리워드 수량이 모두 소진되었습니다.");
+        if (updated == 0 && event.isLimited()) throw new RewardEventExhaustedException("리워드 수량이 모두 소진되었습니다.");
         
         Wallet wallet = walletRepository.findByUserId(userId).orElseThrow();
 
