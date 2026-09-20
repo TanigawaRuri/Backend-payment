@@ -70,6 +70,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
+      - name: Compute lowercase image name
+        run: echo "IMAGE_NAME_LC=${IMAGE_NAME,,}" >> "$GITHUB_ENV"
+        env:
+          IMAGE_NAME: ${{ github.repository }}
+      
       - name: Download application artifact
         uses: actions/download-artifact@v4
         with:
