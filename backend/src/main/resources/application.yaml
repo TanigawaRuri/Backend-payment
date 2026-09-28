@@ -1,0 +1,28 @@
+  spring:
+    datasource:
+      url: jdbc:postgresql://localhost:5432/payment
+      username: payment_user
+      password: payment_user
+
+    jpa:
+      hibernate:
+        ddl-auto: validate
+
+      open-in-view: false
+
+      properties:
+        hibernate:
+          format_sql: true
+    
+    flyway:
+      enabled: true
+      locations: classpath:db/migration
+
+  server:
+    port: 8080
+    error:
+      include-message: always
+
+  jwt:
+    secret: ${JWT_SECRET:CLayeRaFpI4NscifzFW/UVWRHYaE3VLr2r1Mz0W4h9A=}
+    expiration: ${JWT_EXPIRATION:3600000}

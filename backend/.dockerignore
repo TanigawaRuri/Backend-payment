@@ -1,0 +1,30 @@
+# Git
+.git
+.gitignore
+.github
+
+# Maven
+.mvn/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Documentation / local files
+README.md
+
+# Test artifacts
+src/test/

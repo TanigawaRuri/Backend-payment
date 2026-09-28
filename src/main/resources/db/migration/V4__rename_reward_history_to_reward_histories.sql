@@ -1,1 +1,0 @@
-ALTER TABLE reward_history RENAME TO reward_histories;
