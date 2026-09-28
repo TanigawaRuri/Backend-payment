@@ -43,7 +43,7 @@ Testing / CI :
 
 ## 아키텍처
 
-![Architecture](docs/architecture.png)
+![Architecture](docs/reward_platform_architecture.png)
 
 ## 주요 기능
 
