@@ -78,12 +78,6 @@ jobs:
         env:
           IMAGE_NAME: ${{ github.repository }}
       
-      - name: Download application artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: application
-          path: backend/target
-      
       - name: Log in to Github Container Registry
         uses: docker/login-action@v3
         with:
