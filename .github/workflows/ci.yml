@@ -128,6 +128,6 @@ jobs:
             pwd
             ls -la "$HOME"
             cd "$HOME/payment"
-            docker compose -f docker-compose.prod.yml pull backend
-            docker compose -f docker-compose.prod.yml up -d backend
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull backend
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d backend
             docker image prune -f
