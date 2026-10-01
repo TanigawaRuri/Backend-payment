@@ -102,6 +102,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Verify SSH secrets
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          test -n "$SSH_HOST" && echo "SSH_HOST is set" || echo "SSH_HOST is EMPTY"
+          test -n "$SSH_USER" && echo "SSH_USER is set" || echo "SSH_USER is EMPTY"
+          test -n "$SSH_KEY" && echo "SSH_KEY is set" || echo "SSH_KEY is EMPTY"
+
       - name: Deploy to Oracle A1 over SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -109,8 +119,10 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22}}
-          script_stop: true
+          timeout: 30s
+          command_timeout: 10m
           script: |
+            set -e
             cd ~/payment
             docker compose -f docker-compose.prod.yml pull backend
             docker compose -f docker=compose.prod.yml up -d backend
