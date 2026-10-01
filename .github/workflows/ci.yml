@@ -123,7 +123,11 @@ jobs:
           command_timeout: 10m
           script: |
             set -e
-            cd ~/payment
+            echo "SSH user: $(whoami)"
+            echo "Home directory: $HOME"
+            pwd
+            ls -la "$HOME"
+            cd "$HOME/payment"
             docker compose -f docker-compose.prod.yml pull backend
             docker compose -f docker=compose.prod.yml up -d backend
             docker image prune -f
