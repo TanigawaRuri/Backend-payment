@@ -1,1 +1,6 @@
 .env
+notification-service/.env
+backend/.env
+
+!.env.docker
+!.env.example

@@ -30,12 +30,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
     ),
     servers = {
         @Server(
-            description = "Local Development",
-            url = "http://localhost:8080"
-        ),
-        @Server(
-            description = "Production",
-            url = "https://api.yourdomain.com"
+            description = "Current server",
+            url = "/"
         )
     },
     security = @SecurityRequirement(name = "bearerAuth")
