@@ -1,24 +1,43 @@
 services:
-  postgres:
-    image: ${DB_IMAGE:-postgres:16}
-    container_name: payment-postgres
-    restart: unless-stopped
+  notification-service:
+    image: ${NOTIFICATION_IMAGE}
+    container_name: notification-service
+    env_file:
+      - ./notification-service/.env
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - payment_pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_TOPIC: payment-events
+      KAFKA_GROUP_ID: notification-service
+    depends_on:
+      kafka:
+        condition: service_healthy
+    restart: unless-stopped
+
+  backend:
+    image: ${BACKEND_IMAGE}
+    container_name: backend
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    restart: unless-stopped
 
   kafka:
-    image: ${KAFKA_IMAGE:-apache/kafka:3.8.0}
+    image: ${KAFKA_IMAGE}
     container_name: payment-kafka
-    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9092:9092"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
@@ -31,54 +50,37 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_HEAP_OPTS: "-Xmx512m -Xms512m"
-    volumes:
-      - payment_kafkadata:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"
+        ]
       interval: 10s
       timeout: 10s
       retries: 10
       start_period: 20s
 
-  backend:
-    image: ${BACKEND_IMAGE}
-    build:
-      context: ./backend
-    container_name: backend
-    restart: unless-stopped
+  postgres:
+    image: ${DB_IMAGE}
+    container_name: payment-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "127.0.0.1:8080:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET missing in .env}
-      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-
-  notification-service:
-    image: ${NOTIFICATION_IMAGE}
-    build:
-      context: ./notification-service
-    container_name: notification-service
-    restart: unless-stopped
-    env_file:
-      - ./notification-service/.env
-    environment:
-      KAFKA_BROKERS: kafka:9092
-      KAFKA_TOPIC: payment-events
-      KAFKA_GROUP_ID: notification-service
-    depends_on:
-      kafka:
-        condition: service_healthy
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - payment_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   payment_pgdata:
-  payment_kafkadata:

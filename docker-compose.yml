@@ -1,7 +1,7 @@
 services:
   notification-service:
-    build: ./notification-service
-    image: ${NOTIFICATION_IMAGE}
+    build: 
+      context: ./notification-service
     container_name: notification-service
     env_file:
       - ./notification-service/.env
@@ -11,14 +11,13 @@ services:
       KAFKA_GROUP_ID: notification-service
     depends_on:
       kafka:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
 
   backend:
-    image: ${BACKEND_IMAGE}
-    container_name: backend
     build:
       context: ./backend
+    container_name: backend
     ports:
       - "8080:8080"
     environment:
@@ -30,7 +29,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
-  
+    restart: unless-stopped
+    
   kafka:
     image: ${KAFKA_IMAGE}
     container_name: payment-kafka
