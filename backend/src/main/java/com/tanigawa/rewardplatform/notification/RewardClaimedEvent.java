@@ -7,5 +7,5 @@ public record RewardClaimedEvent(
     Long userId,
     String email,
     Long amount,
-    String occuredAt
+    String occurredAt
 ) {}
