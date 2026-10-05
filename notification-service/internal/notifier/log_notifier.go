@@ -3,6 +3,7 @@ package notifier
 import (
     "context"
     "fmt"
+    "os"
 
     "github.com/resend/resend-go/v2"
     "golang.org/x/time/rate"
@@ -35,7 +36,7 @@ func (n *ResendNotifier) Send(
     }
     
     req := &resend.SendEmailRequest{
-        From:  "notification@kyungmunkang.com",
+        From:  os.Getenv("EMAIL_SENDER"),
         To: []string{
             e.Email,
         },

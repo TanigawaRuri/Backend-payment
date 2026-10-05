@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.tanigawa.rewardplatform.exception.WalletConflictException;
 import com.tanigawa.rewardplatform.reward.dto.request.RewardHistoryRequest;
@@ -26,6 +27,7 @@ import com.tanigawa.rewardplatform.wallet.entity.Wallet;
 import com.tanigawa.rewardplatform.wallet.repository.WalletRepository;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class IncreaseBalanceTwiceTest {
     @Autowired
     private RewardEventService rewardEventService;
