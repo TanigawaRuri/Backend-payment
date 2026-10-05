@@ -137,6 +137,7 @@ jobs:
           script: |
             set -e
             cd "$HOME/payment"
+            git pull origin main
             COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
             $COMPOSE pull backend notification-service
             $COMPOSE up -d backend notification-service
