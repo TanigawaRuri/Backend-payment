@@ -1,6 +1,7 @@
 services:
   notification-service:
     build: ./notification-service
+    image: ${NOTIFICATION_IMAGE}
     container_name: notification-service
     env_file:
       - ./notification-service/.env

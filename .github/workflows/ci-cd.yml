@@ -65,12 +65,24 @@ jobs:
       contents: read
       packages: write
     
+    strategy:
+      matrix:
+        include:
+          - service: backend
+            context: backend
+            suffix: ""
+          - service: notification-service
+            context: notification-service
+            suffix: "-notification"
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       
       - name: Compute lowercase image name
-        run: echo "IMAGE_NAME_LC=${IMAGE_NAME,,}" >> "$GITHUB_ENV"
+        run: | 
+          echo "IMAGE_NAME_LC=${IMAGE_NAME,,}" >> "$GITHUB_ENV"
+          echo "NOTIFICATION_IMAGE=ghcr.io/${IMAGE_NAME,,}-notification:latest" >> "$GITHUB_ENV"
         env:
           IMAGE_NAME: ${{ github.repository }}
       
@@ -84,7 +96,7 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
       
-      - name: Build and push arm64 image
+      - name: Build and push arm64 image (${{ matrix.service }})
         uses: docker/build-push-action@v6
         with:
           context: backend
@@ -93,8 +105,8 @@ jobs:
           tags: |
             ghcr.io/${{ env.IMAGE_NAME_LC }}:${{ github.sha }}
             ghcr.io/${{ env.IMAGE_NAME_LC }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha, scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max, scope=${{ matrix.service }}
 
   deploy:
     needs: docker
@@ -114,6 +126,8 @@ jobs:
 
       - name: Deploy to Oracle A1 over SSH
         uses: appleboy/ssh-action@v1
+        env:
+          NOTIFICATION_IMAGE: ${{ env.NOTIFICATION_IMAGE }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -128,6 +142,8 @@ jobs:
             pwd
             ls -la "$HOME"
             cd "$HOME/payment"
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull backend
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d backend
+            COMPOSE="docker compose -f docker-compose.yml -f docker-compose.prod.yml"
+            $COMPOSE pull backend notification-service
+            $COMPOSE up -d backend notification-service
+            $COMPOSE ps
             docker image prune -f
