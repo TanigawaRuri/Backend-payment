@@ -3,7 +3,6 @@ package notifier
 import (
     "context"
     "fmt"
-    "os"
 
     "github.com/resend/resend-go/v2"
     "golang.org/x/time/rate"
@@ -36,9 +35,9 @@ func (n *ResendNotifier) Send(
     }
     
     req := &resend.SendEmailRequest{
-        From:  "onboarding@resend.dev",
+        From:  "notification@kyungmunkang.com",
         To: []string{
-            os.Getenv("MY_EMAIL"),
+            e.Email,
         },
         Subject: "You've received a reward!",
         Text: fmt.Sprintf(
