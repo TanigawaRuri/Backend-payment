@@ -3,7 +3,7 @@
 동시 요청 환경에서 데이터 정합성, 성능, 비동기 이벤트 처리​를 검증하기 위해 구현한 결제·리워드 백엔드 프로젝트입니다.
 동시성 문제를 k6로 검증하고, 결제 처리와 알림 처리를 Kafka 기반 비동기 구조로 분리했습니다.
 
-배포 서버 : http://152.70.83.194/swagger-ui/index.html
+배포 서버 : http://kyungmunkang.com/swagger-ui/index.html
 
 ## 목차
 
