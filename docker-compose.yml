@@ -24,9 +24,6 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    networks:
-      - default
-      - kafka-net
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,11 +70,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-networks:
-  kafka-net:
-    name: backend-payment_default
-    external: true
 
 volumes:
   payment_pgdata:

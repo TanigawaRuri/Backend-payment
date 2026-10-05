@@ -1,6 +1,6 @@
   spring:
     datasource:
-      url: 
+      url: ${DB_URL}
       username: payment_user
       password: payment_user
 
