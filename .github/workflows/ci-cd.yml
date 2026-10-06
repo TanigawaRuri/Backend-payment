@@ -2,9 +2,15 @@ name: CI/CD
 
 on:
   push:
+    paths-ignore:
+        - '**.md'
+        - 'docs/**'
     branches: [main, develop]
   pull_request:
-     branches: [main, develop]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+    branches: [main, develop]
 
 concurrency:
   group: ci-${{ github.ref }}
