@@ -62,6 +62,7 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/payment
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: postgres
+          JWT_SECRET: test-only-secret-key-at-least-32-bytes-long-0123456789
     
   docker:
     needs: test
