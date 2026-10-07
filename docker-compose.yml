@@ -4,7 +4,8 @@ services:
       context: ./notification-service
     container_name: notification-service
     env_file:
-      - ./notification-service/.env
+      - path: ./notification-service/.env
+        required: false
     environment:
       KAFKA_BROKERS: kafka:9092
       KAFKA_TOPIC: payment-events
