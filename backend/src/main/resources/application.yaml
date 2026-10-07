@@ -1,8 +1,8 @@
   spring:
     datasource:
-      url: ${DB_URL:-jdbc:postgresql://postgres:5432/payment}
-      username: ${DB_USERNAME:-postgres_user}
-      password: ${DB_PASSWORD:-postgres_password}
+      url: ${SPRING_DATASOURCE_URL}
+      username: ${SPRING_DATASOURCE_USERNAME}
+      password: ${SPRING_DATASOURCE_PASSWORD}
 
     jpa:
       hibernate:
