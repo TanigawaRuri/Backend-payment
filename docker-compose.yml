@@ -64,7 +64,7 @@ services:
     image: ${DB_IMAGE:-postgres:16}
     container_name: payment-postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-postgres_db}
+      POSTGRES_DB: ${POSTGRES_DB:-payment}
       POSTGRES_USER: ${POSTGRES_USER:-postgres_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_password}
     ports:
@@ -72,7 +72,7 @@ services:
     volumes:
       - payment_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres_user} -d ${POSTGRES_DB:-postgres_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres_user} -d ${POSTGRES_DB:-payment}"]
       interval: 5s
       timeout: 5s
       retries: 5
