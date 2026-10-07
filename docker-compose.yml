@@ -35,7 +35,7 @@ services:
     restart: unless-stopped
     
   kafka:
-    image: ${KAFKA_IMAGE:-kafka_image}
+    image: ${KAFKA_IMAGE:-apache/kafka:3.8.0}
     container_name: payment-kafka
     ports:
       - "9092:9092"
@@ -59,7 +59,7 @@ services:
       start_period: 20s
 
   postgres:
-    image: ${DB_IMAGE:-db_image}
+    image: ${DB_IMAGE:-postgres:16}
     container_name: payment-postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-postgres_db}
