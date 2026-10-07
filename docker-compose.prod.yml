@@ -1,6 +1,6 @@
 services:
   notification-service:
-    image: ${NOTIFICATION_IMAGE}
+    image: ${NOTIFICATION_IMAGE:-notification_image}
     container_name: notification-service
     env_file:
       - ./notification-service/.env
@@ -14,18 +14,18 @@ services:
     restart: unless-stopped
 
   backend:
-    image: ${BACKEND_IMAGE}
+    image: ${BACKEND_IMAGE:-backend_image}
     container_name: backend
     ports:
       - "127.0.0.1:8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-postgres_db}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres_user}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres_password}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-360000}
     depends_on:
       postgres:
         condition: service_healthy
@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
 
   kafka:
-    image: ${KAFKA_IMAGE}
+    image: ${KAFKA_IMAGE:-kafka_image}
     container_name: payment-kafka
     ports:
       - "127.0.0.1:9092:9092"
@@ -62,12 +62,12 @@ services:
       start_period: 20s
 
   postgres:
-    image: ${DB_IMAGE}
+    image: ${DB_IMAGE:-db_image}
     container_name: payment-postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_password}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
@@ -76,7 +76,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+          "pg_isready -U ${POSTGRES_USER:-postgres_user} -d ${POSTGRES_DB:-postgres_db}"
         ]
       interval: 5s
       timeout: 5s
