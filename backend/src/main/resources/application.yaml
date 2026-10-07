@@ -1,8 +1,8 @@
   spring:
     datasource:
-      url: ${DB_URL}
-      username: ${DB_USERNAME}
-      password: ${DB_PASSWORD}
+      url: ${DB_URL:-jdbc:postgresql://postgres:5432/payment}
+      username: ${DB_USERNAME:-postgres_user}
+      password: ${DB_PASSWORD:-postgres_password}
 
     jpa:
       hibernate:
@@ -31,5 +31,5 @@
     port: 8080
 
   jwt:
-    secret: ${JWT_SECRET:CLayeRaFpI4NscifzFW/UVWRHYaE3VLr2r1Mz0W4h9A=}
+    secret: ${JWT_SECRET:-}
     expiration: ${JWT_EXPIRATION:3600000}
