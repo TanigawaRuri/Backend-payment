@@ -9,6 +9,8 @@ services:
       KAFKA_BROKERS: kafka:9092
       KAFKA_TOPIC: payment-events
       KAFKA_GROUP_ID: notification-service
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_SENDER: ${EMAIL_SENDER:-}
     depends_on:
       kafka:
         condition: service_healthy
